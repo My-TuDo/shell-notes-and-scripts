@@ -9,8 +9,7 @@ env 或者 printenv 命令，可以显示所有环境变量
 env
 # 或者
 printenv
-```
-```bash
+
 # 运行该指令可以直接查看
 cd ./01-variables/Shell
 bash 001.sh
@@ -25,10 +24,10 @@ bash 001.sh
 printenv $PATH
 # 或者
 echo $PATH
-```
-```bash
+
 # 运行该指令可以直接查看
 cd ./01-variables/Shell
 bash 002.sh
 ```
 - [查询单个环境变量](./Shell/002.sh)
+
