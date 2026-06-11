@@ -226,3 +226,26 @@ fi
 
 上面的例子中，先判断`INT`变量是否为空。然后判断是否为0，接着判断正负，再判断奇偶性。
 
+### 3.4 正则判断
+
+`[[ expression ]]`这种判断形式，支持正则判断。
+```bash
+[[ string1 =~ regex ]]
+```
+上面的语法中，`regex`是一个正则表达式，`=~`是一个正则比较运算符。
+
+例子：
+```bash
+#!/bin/bash
+
+INT=-5
+
+if [[ "$INT" =~ ^-?[0-9]+$ ]]; then
+    echo "INT is an integer."
+    exit 0
+else 
+    echo "INT is not an integer." >&2
+    exit 1
+fi
+```
+上面的代码中，先判断变量`INT`的字符串形式，是否满足`-?[0-9]+$`的正则模式，如果满足就表明它是一个整数。
