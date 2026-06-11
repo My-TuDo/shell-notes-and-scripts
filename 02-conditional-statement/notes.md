@@ -84,7 +84,7 @@ fi
 
 `if`关键字后面，跟着一个命令。这个命令可以是`test`命令，也可以是其他命令根据命令的返回值`0`判断表达式成立，否则表达式不成立。因为这些命令主要式为了得到返回值，所以也可以视为表达式。
 
-### 文件判断
+### 3.1 文件判断
 
 以下表达式用来判断文件状态。
 
@@ -140,3 +140,83 @@ else
 fi
 ```
 [点击前往Shell文件](./Shell/004.sh)
+
+上面代码中，`$FILE`要放在双引号之中，这样可以防止`$FILE`为空导致的bug。因为`$FILE`为空，这时`[ -e $FILE ]`就变成了`[ -e ]`，这会被判断为真。而`[ -e "$FILE" ]`则变成`[ -e "" ]`，这会判断为伪。
+
+### 3.2 字符串判断
+
+以下表达式用来判断字符串。
+
+- `[ string ]`：如果`string`不为空（长度大于0），则判断为真。
+- `[ -n string ]`：如果字符串`string`的长度大于零，则判断为真。
+- `[ -z string ]`：如果字符串`string`的长度为零，则判断为真。
+- `[ string1 = string2 ]`：如果`string1`和`string2`相同，则判断为真。
+- `[ string1 == string2 ]` 等同于`[ string1 = string2 ]`。
+- `[ string1 != string2 ]`：如果`string1`和`string2`不相同，则判断为真。
+- `[ string1 '>' string2 ]`：如果按照字典顺序`string1`排列在`string2`之后，则判断为真。
+- `[ string1 '<' string2 ]`：如果按照字典顺序`string1`排列在`string2`之前，则判断为真。
+
+注意，`test`命令内部的`>`和`<`，必须用引号引起来（或者是用反斜杠转义）。否则，它们会被 shell 解释为重定向操作符。
+
+示例：
+```bash
+#!/bin/bash
+
+ANSWER=maybe
+
+if [ -z "$ANSWER" ]; then
+    echo "There is np answer." >&2
+    exit 1
+fi
+if [ "$ANSWER" = "yes" ]; then
+    echo "The answer is YES."
+elif [ "$ANSWER" = "no" ]; then
+    echo "The answer is NO."
+elif [ "$ANSWER" = "maybe" ]; then
+    echo "Then answer is MAYBE."
+else
+    echo "Then answer is UNKNOWW."
+fi
+```
+[点击前往Shell文件](./Shell/005.sh)
+
+上面代码中，首先判断`$ANSWER`是否为空。若为空，终止脚本，并把退出状态设置为1。这里的`echo`命令把错误信息`There is np answer`重定向为`2(标准错误)`,这是处理错误的常用方法。如果`$ANSWER`不为空，则进行后续判断：是否为`YES`、`NO`还是`MAYBE`。
+
+注意，进行字符串判断时，需要将变量置于双引号下，否则字符串替换变量时，`test`命令可能会报错，提示参数过多。如果不放在双引号之中,比如`[ -n $ANSWER ]`，命令就会变成`[ -n ]`，这是会判断为真。放在双引号之中，命令就会变成`[ -n "" ]`，就会判断为伪。
+
+### 3.3 整数判断
+
+下面的表达式用于判断整数。
+
+- `[ integer1 -eq integer2 ]`：如果`integer1`等于`integer2`，则为`true`。
+- `[ integer1 -ne integer2 ]`：如果`integer1`不等于`integer2`，则为`true`。
+- `[ integer1 -le integer2 ]`：如果`integer1`小于或等于`integer2`，则为`true`。
+- `[ integer1 -lt integer2 ]`：如果`integer1`小于`integer2`，则为`true`。
+- `[ integer1 -ge integer2 ]`：如果`integer1`大于或等于`integer2`，则为`true`。
+- `[ integer1 -gt integer2 ]`：如果`integer1`大于`integer2`，则为`true`。
+
+例子：
+```bash
+#!/bin/bash
+
+INT=-5
+
+if [ -z "$INT" ]; then
+    echo "INT is empty" >&2
+    exit 1
+fi
+if [ $INT -eq 0 ]; then
+    echo "INT is zero."
+else
+    if [ $INT -lt 0 ]; then
+        echo "INT is negative."
+    else
+        echo "INT is positive."
+    fi
+    if [ $((INT % 2)) -eq 0 ]; then
+        echo "INT is even."
+    else 
+        echo "INT is odd."
+    fi
+fi
+```
