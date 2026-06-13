@@ -342,3 +342,72 @@ else
 fi
 ```
 [点击前往Shell文件](./Shell/009.sh)
+只要是算数表达式，都可以使用 `((...))`。
+
+
+### 3.7 普通命令的逻辑运算
+
+如果 `if` 结构后面使用的并非 `test` 命令，而是普通命令，或者普通命令和 `test` 命令混用，那么可以使用 `&&` 或 `||`
+
+例如：
+```bash
+command1 && command2
+command1 || command2
+```
+上面例子中，对于 `&&` 操作符，先执行 `command1`，当且仅当 `command1` 执行成功后，再执行 `command2`；对于 `||` 操作符，先执行 `command1`，只有 `command1` 执行失败后，才执行 `command2`。
+
+```bash
+mkdir temp && cd temp
+```
+👆上面的例子中，只有执行 `mkdir temp` 成功创建文件夹后，才会执行 `cd temp` 命令。
+
+```bash
+[ ! -d temp ] && exit 1
+```
+👆上面的例子中，如果找不到 `temp` 目录，脚本终止，返回值 `1`。
+
+```bash
+[ -d temp ] || mkdir temp
+```
+👆上面的例子中，只有执行 `[ -d temp ]` 失败，即找不到 `temp` 目录时，才会执行第二个命令 `mkdir temp` 创建目录。
+
+👇下面是 `if` 与 `&&` 结合使用的写法
+```bash
+if [ condition ] && [ condition ]; then
+    command
+fi
+```
+例子：
+```bash
+#!/bin/bash
+
+filename=$1
+word1=$2
+word2=$3
+
+if grep $word1 $filename && grep $word2 $filename
+then
+    ehco "$word1 and $word2 are both in $filename."
+fi
+```
+👆上面的例子中，只有同时存在搜索词 `word1` 和 `word2`，才会执行 `if` 结构体里面的命令。
+
+👇下面示例一个将 `&&` 判别式改为对应的 `if` 结构。
+```bash
+[[ -d "$dir_name" ]] && cd "$dir_name" && rm *
+# 意思是：寻找到 dir_name 目录后，cd 到该目录，然后删除该目录中的所有文件。
+# 等同于：
+
+if [[ ! -d "$dir_name "]]; then
+    echo "No such directory: '$dir_name'" >&2
+    exit 1
+fi
+if ! cd "$dir_name"; then
+    echo "Cannot cd to '$dir_name'" >&2
+    exit 1
+fi
+if ! rm *; then
+    echo "File deletion failed. Check results" >&2
+    exit 1
+fi
+```
