@@ -292,3 +292,53 @@ else
 fi
 ```
 上面的例子中，`test` 内部使用圆括号是必须用 `\` 转义。否之会被 Bash 解释。
+
+### 3.6 算数判断
+
+Bash 提供了 `((...))` 作为算数条件，进行算数运算的判断。
+```bash
+if (( 3 > 2 ));then echo "true"; fi
+```
+该式子会返回 `true`。
+
+算数判断不需要使用 `test` 命令，而是直接使用 `((...))` 结构。
+如果算数运算的结果是非零值，则算数判断为成立。这与命令的返回值模式相反。
+```bash
+if ((1)); then echo "It is true."; fi
+# true
+if ((0)); then echo "It is true."; else echo "It is false."; fi
+# false
+```
+算数条件也可以为变量赋值。
+```bash
+if (( foo = 5 )); then echo "foo is $foo"; fi
+# foo is 5
+```
+需要注意的是，赋值语句返回的是等号右边的值，当赋值为 `0` 时，返回值为 `false`
+
+```bash
+#!/bin/bash
+
+INT=-5
+
+if [[ "$INT" =~ ^-?[0-9]+$ ]]; then
+    if ((INT == 0)); then
+        echo "INT is zero."
+    else
+        if ((INT < 0)); then
+            echo "INT is negative."
+        else 
+            echo "INT is positive."
+        fi
+        if (( ((INT % 2)) == 0)); then
+            echo "INT is even."
+        else 
+            echo "INT is odd"
+        fi
+    fi
+else
+    echo "INT is not an integet" >&2
+    exit 1
+fi
+```
+[点击前往Shell文件](./Shell/009.sh)
