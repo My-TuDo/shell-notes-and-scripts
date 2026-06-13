@@ -411,3 +411,101 @@ if ! rm *; then
     exit 1
 fi
 ```
+
+## 4. case 结构
+
+`case` 结构用于多值判断，可以为每个值指定命令，跟包含多个 `elif` 的 `if` 结构等价，但语义更好。写法如下：
+```bash
+case expression in
+    patten )
+        commands ;;
+    patten )
+        commands ;;
+    ...
+esac
+```
+👆上面的代码中，`exprssion` 对应的是一个表达式，`patten` 是表达式的一个值或者一个模式，可以有多个 `patten`。每条由 `;;`结尾。
+
+```bash
+#!/bin/bash
+
+echo -n "输入一个1到3之间的数字（两端闭合）"
+read character
+case $character in
+    1 ) echo 1 ;;
+    2 ) echo 2 ;;
+    3 ) echo 3 ;;
+    * ) echo "输入不符合要求。" ;;
+esac
+```
+[点击前往Shell文件](./Shell/010.sh)
+👆上面的例子中，最后一条匹配语句是 `*`，意为除指定值或模式的其余区间,类似于 `if` 结构中的 `else`。
+
+```bash
+#!/bin/bash
+
+OS=$(uname -s)  # uname -s 获取内核名称
+
+case $OS in
+    FreeBSD) echo "This is FreeBSD." ;;
+    Darwin) echo "This is Darwin." ;;
+    AIX) echo "This is AIX." ;;
+    Minix) echo "This is Minix." ;;
+    Linux) echo "This is Linux." ;;
+    *) echo "Failed to identify this OS." ;;
+esac
+```
+[点击前往Shell文件](./Shell/011.sh)
+👆上面的例子是判断当期是什么操作系统。
+
+`case` 的匹配模式可以使用各种通配符，如下：
+
+- `a)`：匹配`a`。
+- `a|b)`：匹配`a`或`b`。
+- `[[:alpha:]])`：匹配单个字母。
+- `???)`：匹配3个字符的单词。
+- `*.txt)`：匹配`.txt`结尾。
+- `*)`：匹配任意输入，通常作为`case`结构的最后一个模式。
+
+```bash
+#!/bin/bash
+
+echo -n "请输入一个字母或者一个单词："
+read character
+case $character in
+    [[:lower:]] | [[:upper:]]) echo "用户输入了字母：$character" ;;
+    [0-9]) echo "用户输入了数值：$character" ;;
+    *) echo "用户的输入不符合要求" ;;
+esac
+```
+[点击前往Shell文件](./Shell/012.sh)
+👆上面例子中，使用 `[[:lower:]] | [[:upper:]]` 匹配小写字母或大写字母，使用 `[0-9]` 匹配数字。
+
+```bash
+#!/bin/bash
+# 013.sh
+
+read -n 1 -p "Type a character > "
+echo
+case $REPLY in
+  [[:upper:]])    echo "'$REPLY' is upper case." ;;&
+  [[:lower:]])    echo "'$REPLY' is lower case." ;;&
+  [[:alpha:]])    echo "'$REPLY' is alphabetic." ;;&
+  [[:digit:]])    echo "'$REPLY' is a digit." ;;&
+  [[:graph:]])    echo "'$REPLY' is a visible character." ;;&
+  [[:punct:]])    echo "'$REPLY' is a punctuation symbol." ;;&
+  [[:space:]])    echo "'$REPLY' is a whitespace character." ;;&
+  [[:xdigit:]])   echo "'$REPLY' is a hexadecimal digit." ;;&
+esac
+```
+[点击前往Shell文件](./Shell/013.sh)
+执行上面的脚本，会得到以下结果：
+```bash
+Type a character > a
+'a' is lower case.
+'a' is alphabetic.
+'a' is a visible character.
+'a' is a hexadecimal digit.
+```
+
+可以看到条件语句结尾添加了 `;;&` 之后，匹配条件后不会退出 `case` 结构体，而是继续判断下一条条件。
