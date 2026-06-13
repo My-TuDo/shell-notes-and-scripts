@@ -7,3 +7,4 @@ if test $USER = "foo";then
 else
     echo "You are not foo."
 fi
+

@@ -248,4 +248,47 @@ else
     exit 1
 fi
 ```
+[点击前往Shell文件](./Shell/007.sh)
 上面的代码中，先判断变量`INT`的字符串形式，是否满足`-?[0-9]+$`的正则模式，如果满足就表明它是一个整数。
+
+### 3.5 test 判断的逻辑运算
+
+通过逻辑运算，可以把多个`test`判断表达式结合起来，创造更复杂的判断表达式。
+
+- `AND`运算：通过 `&&` 连接，也可以使用参数 `-a`。
+- `OR` 运算：通过 `||` 连接，也可以使用参数 `-o`。
+- `NOT`运算：符号 `!`。
+
+例子：
+```bash
+#!/bin/bash
+
+MIN_VAL=1
+MAX_VAL=100
+
+INT=50
+
+if [[ "$INT" =~ ^-?[0-9]+$ ]]; then
+    if [[ $INT -ge $MIN_VAL && $INT -le $MAX_VAL ]]; then
+        echo "$INT is within $MIN_VAL to $MAX_VAL."
+    else
+        echo "$INT is out fo range."
+    fi
+else
+    echo "$INT is not an integer" >&2
+    exit 1
+fi
+```
+[点击前往Shell文件](./Shell/008.sh)
+
+上面的例子中，用 `&&` 判断 `INT` 是否大于 `MIN_VAL` 且小于 `MAX_VAL`。
+
+使用否定操作符 `!` 时，最好用圆括号转义否定的范围。
+```bash
+if [[ ! \($INT -ge $MIN_VAL && $INT -le $MAX_VAL) ]]; then
+    echo "$INT is outside $MIN_VAL to $MAX_VAL."
+else
+    echo "$INT is in range."
+fi
+```
+上面的例子中，`test` 内部使用圆括号是必须用 `\` 转义。否之会被 Bash 解释。
