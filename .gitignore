@@ -1,0 +1,35 @@
+# === 1. 敏感隐私数据（死命令，必须全量封杀） ===
+.env
+.env.*
+*.pem
+*.key
+secrets/
+credentials/
+
+# === 2. 自动化 Agent 与 AI 配置文件 ===
+# Reasonix、Cursor 或其他工具的本地运行配置
+.reasonix/
+reasonix.toml
+.cursor/
+.trae/
+
+# === 3. Go 语言编译与日志文件 ===
+# 二进制可执行文件（Go 编译出的结果）
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+__debug_bin
+bin/
+
+# 日志文件与打包压缩包（比如你的 backup_logs.tar.gz）
+*.log
+*.tar.gz
+*.zip
+logs_demo/
+
+# === 4. 系统与 IDE 缓存 ===
+.DS_Store
+.idea/
+.vscode/
